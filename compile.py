@@ -11,7 +11,7 @@ startfile = "Main.class"
 startclass = ""
 runbat = "run.bat"
 
-# Concat java files path
+# Concatenating paths to java files
 def java_dir_processing(path):
 	global concat
 	ld = os.listdir(path)
@@ -20,7 +20,7 @@ def java_dir_processing(path):
 			concat += "./" + path + "/" + file + "\n"
 		else: java_dir_processing(path + "/" + file)
 
-# Get start class path
+# Getting the path to the starting class
 def class_dir_processing(path):
 	global startclass
 	ld = os.listdir(path)
