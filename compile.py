@@ -16,24 +16,24 @@ def java_dir_processing(path):
 	global concat
 	ld = os.listdir(path)
 	for file in ld:
-		if re.search(r"\.", file):
+		if re.search(r"\.java", file):
 			concat += "./" + path + "/" + file + "\n"
-		else: java_dir_processing(path + "/" + file)
+		elif os.path.isdir(path + "/" + file): java_dir_processing(path + "/" + file)
 
 # Getting the path to the starting class
 def class_dir_processing(path):
 	global startclass
 	ld = os.listdir(path)
 	for file in ld:
-		if re.search(r"\.", file):
-			if(file == startfile):
-				startclass = path + "/" + re.split(r"\.", file)[0]
-				startclass = re.sub(r"/", ".", startclass.replace(classpath+"/", ""))
-				return;
-		else: class_dir_processing(path + "/" + file)
+		if re.search(startfile, file):
+			startclass = path + "/" + re.split(r"\.", file)[0]
+			startclass = re.sub(r"/", ".", startclass.replace(classpath+"/", ""))
+			return;
+		elif os.path.isdir(path + "/" + file): class_dir_processing(path + "/" + file)
 
 # Call jdp
 java_dir_processing(javapath)
+print(concat);
 
 # Create file with paths 
 f = open(sourcetxt, "w+")
