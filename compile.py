@@ -2,16 +2,27 @@ import shutil
 import os
 import re
 
-# Config
+# Storage
 concat = ""
 assets = []
-javapath = "java"
-classpath = "class"
-sourcetxt = "source.txt"
-compilebat = "compile.bat"
-startfile = "Main.class"
 startclass = ""
-runbat = "run.bat"
+# Static config
+config = {
+	"javapath": "java",
+	"classpath": "class",
+	"sourcetxt": "source.txt",
+	"compilebat": "compile.bat",
+	"startfile": "Main.class",
+	"runbat": "run.bat",
+}
+
+# Getting configurations from a file
+if os.path.exists("compile_config.txt"):
+	f = open("compile_config.txt", "r")
+	for line in f:
+		line = line.replace(" ", "").split("=");
+		config[line[0]] = re.sub(r"\"", "", re.findall(r"\".*\"",line[1])[0]);
+	f.close()
 
 # Concatenating paths to java files
 def java_dir_processing(path):
@@ -28,9 +39,9 @@ def class_dir_processing(path):
 	global startclass
 	ld = os.listdir(path)
 	for file in ld:
-		if re.search(startfile, file):
+		if re.search(config["startfile"], file):
 			startclass = path + "/" + re.split(r"\.", file)[0]
-			startclass = re.sub(r"/", ".", startclass.replace(classpath+"/", ""))
+			startclass = re.sub(r"/", ".", startclass.replace(config["classpath"]+"/", ""))
 			return;
 		elif os.path.isdir(path + "/" + file): class_dir_processing(path + "/" + file)
 
@@ -38,9 +49,9 @@ def class_dir_processing(path):
 def assets_processing():
 	global assets
 	for asset in assets:
-		topath = re.sub(r"\/\w*\.\w*", "/", asset.replace(javapath, classpath, 1))
+		topath = re.sub(r"\/\w*\.\w*", "/", asset.replace(config["javapath"], config["classpath"], 1))
 		if not os.path.exists(topath):
-			shutil.copytree(topath.replace(classpath, javapath),topath)
+			shutil.copytree(topath.replace(config["classpath"], config["javapath"]),topath)
 			for filename in os.listdir(topath):
 				fullpath = topath + filename
 				if os.path.isfile(fullpath): os.unlink(fullpath)
@@ -54,35 +65,35 @@ def create_file(name, content):
 	f.close()
 
 # Call jdp
-java_dir_processing(javapath)
+java_dir_processing(config["javapath"])
 print(concat);
 print(assets);
 
 # Create file with paths
-create_file(sourcetxt, concat)
+create_file(config["sourcetxt"], concat)
 
 # Delete class folder if it exists
-if os.path.exists(classpath): shutil.rmtree(classpath)
+if os.path.exists(config["classpath"]): shutil.rmtree(config["classpath"])
 
 # Create file with compilation command
-create_file(compilebat, "javac -d " + classpath + " @" + sourcetxt + "\n")
+create_file(config["compilebat"], "javac -d " + config["classpath"] + " @" + config["sourcetxt"] + "\n")
 
 # Compilation activation
-os.system(compilebat)
+os.system(config["compilebat"])
 # Removing intermediate files
-os.remove(compilebat)
-os.remove(sourcetxt)
+os.remove(config["compilebat"])
+os.remove(config["sourcetxt"])
 
 # Call ap
 assets_processing()
 # Call cdp
-class_dir_processing(classpath)
+class_dir_processing(config["classpath"])
 
 # Creating an interpretation file
-create_file(runbat, "java -classpath ./" + classpath + " " + startclass + "\npause")
+create_file(config["runbat"], "java -classpath ./" + config["classpath"] + " " + startclass + "\npause")
 
 # Running the code
-os.system(runbat)
+os.system(config["runbat"])
 
 # Removing intermediate files
-os.remove(runbat)
+os.remove(config["runbat"])
