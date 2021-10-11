@@ -66,8 +66,6 @@ def create_file(name, content):
 
 # Call jdp
 java_dir_processing(config["javapath"])
-print(concat);
-print(assets);
 
 # Create file with paths
 create_file(config["sourcetxt"], concat)
