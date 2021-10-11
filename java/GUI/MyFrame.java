@@ -2,16 +2,21 @@ package com.main.GUI;
 
 import javax.swing.JFrame;
 
-public class MyFrame {
+public class MyFrame extends JFrame{
 
-	JFrame frame = new JFrame();
-	
+	MyPanel panel;
+
 	public MyFrame() {
-		frame.setTitle("Main");
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setSize(500, 500);
-		frame.setLayout(null);
+		panel = new MyPanel();
 
-		frame.setVisible(true);
+		this.setTitle("JDK");
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		this.add(panel);
+		
+		this.pack();
+
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
 	}
 }

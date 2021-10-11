@@ -1,6 +1,6 @@
 package com.main;
 
-import com.main.GUI.*;
+import com.main.GUI.MyFrame;
 
 public class Main {
 
