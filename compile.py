@@ -14,6 +14,7 @@ config = {
 	"compilebat": "compile.bat",
 	"startfile": "Main.class",
 	"runbat": "run.bat",
+	"copyassets": "true"
 }
 
 # Getting configurations from a file
@@ -21,7 +22,7 @@ if os.path.exists("compile_config.txt"):
 	f = open("compile_config.txt", "r")
 	for line in f:
 		line = line.replace(" ", "").split("=");
-		config[line[0]] = re.sub(r"\"", "", re.findall(r"\".*\"",line[1])[0]);
+		config[line[0]] = line[1].rstrip();
 	f.close()
 
 # Concatenating paths to java files
@@ -83,7 +84,7 @@ os.remove(config["compilebat"])
 os.remove(config["sourcetxt"])
 
 # Call ap
-assets_processing()
+if(config["copyassets"] == "true"): assets_processing()
 # Call cdp
 class_dir_processing(config["classpath"])
 
