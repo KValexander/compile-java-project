@@ -2,6 +2,8 @@ import shutil
 import os
 import re
 
+from tkinter import *
+
 # Storage
 concat = ""
 assets = []
@@ -12,7 +14,7 @@ config = {
 	"classpath": "class",
 	"sourcetxt": "source.txt",
 	"compilebat": "compile.bat",
-	"startfile": "Main.class",
+	"startclass": "Main.class",
 	"runbat": "run.bat",
 	"copyassets": "true"
 }
@@ -24,6 +26,63 @@ if os.path.exists("compile_config.txt"):
 		line = line.replace(" ", "").split("=");
 		config[line[0]] = line[1].rstrip();
 	f.close()
+
+# Entries
+entries = {
+	"javapath": "Java path: ",
+	"classpath": "Class path: ",
+	"sourcetxt": "Source txt: ",
+	"compilebat": "Compile bat: ",
+	"startclass": "Start class: ",
+	"runbat": "Run bat: ",
+	"copyassets": "Copy assets: "
+}
+
+# Setting configurations
+def setting_configurations():
+	for key, val in entries.items():
+		if(entries[key].get() != ""): config[key] = entries[key].get()
+
+	# Overwrite config file
+	f = open("compile_config.txt", "w+")
+	for key, val in config.items():
+		f.write(key + " = " + val + "\n")
+	f.close()
+
+	# Call start processing
+	start_processing()
+
+# GUI
+def tkinter_interface():
+	global entries
+
+	# Window
+	window = Tk()
+	window.title("Java compilation automator")
+	window.resizable(width=False, height=False)
+	window.geometry("400x300")
+
+	# Labels and Entries
+	i = 0
+	for key, val in entries.items():
+		entries[key] = create_field(window, val, 30, 0, i)
+		entries[key].insert(0, config[key])
+		i += 2
+
+	# Button
+	button = Button(window, text="Run", background="#888", foreground="#eee", padx="20", pady="0", font="20", command=setting_configurations)
+	button.grid(column=2,row=0, padx=20)
+
+	# Mainloop
+	window.mainloop()
+
+# Create field
+def create_field(win, text, width, c, r):
+	label = Label(win, text=text)
+	label.grid(column=c, row=r, pady=10, padx=10)
+	txt = Entry(win, width=width)
+	txt.grid(column=c+1, row=r)
+	return txt
 
 # Concatenating paths to java files
 def java_dir_processing(path):
@@ -40,7 +99,7 @@ def class_dir_processing(path):
 	global startclass
 	ld = os.listdir(path)
 	for file in ld:
-		if re.search(config["startfile"], file):
+		if re.search(config["startclass"], file):
 			startclass = path + "/" + re.split(r"\.", file)[0]
 			startclass = re.sub(r"/", ".", startclass.replace(config["classpath"]+"/", ""))
 			return;
@@ -65,34 +124,41 @@ def create_file(name, content):
 	f.write(content)
 	f.close()
 
-# Call jdp
-java_dir_processing(config["javapath"])
+# Start programm
+def start_processing():
 
-# Create file with paths
-create_file(config["sourcetxt"], concat)
+	# Call jdp
+	java_dir_processing(config["javapath"])
 
-# Delete class folder if it exists
-if os.path.exists(config["classpath"]): shutil.rmtree(config["classpath"])
+	# Create file with paths
+	create_file(config["sourcetxt"], concat)
 
-# Create file with compilation command
-create_file(config["compilebat"], "javac -d " + config["classpath"] + " @" + config["sourcetxt"] + "\n")
+	# Delete class folder if it exists
+	if os.path.exists(config["classpath"]): shutil.rmtree(config["classpath"])
 
-# Compilation activation
-os.system(config["compilebat"])
-# Removing intermediate files
-os.remove(config["compilebat"])
-os.remove(config["sourcetxt"])
+	# Create file with compilation command
+	create_file(config["compilebat"], "javac -d " + config["classpath"] + " @" + config["sourcetxt"] + "\n")
 
-# Call ap
-if(config["copyassets"] == "true"): assets_processing()
-# Call cdp
-class_dir_processing(config["classpath"])
+	# Compilation activation
+	os.system(config["compilebat"])
+	# Removing intermediate files
+	os.remove(config["compilebat"])
+	os.remove(config["sourcetxt"])
 
-# Creating an interpretation file
-create_file(config["runbat"], "java -classpath ./" + config["classpath"] + " " + startclass + "\npause")
+	# Call ap
+	if(config["copyassets"] == "true"): assets_processing()
+	# Call cdp
+	class_dir_processing(config["classpath"])
 
-# Running the code
-os.system(config["runbat"])
+	# Creating an interpretation file
+	create_file(config["runbat"], "java -classpath ./" + config["classpath"] + " " + startclass)
 
-# Removing intermediate files
-os.remove(config["runbat"])
+	# Running the code
+	os.system(config["runbat"])
+
+	# Removing intermediate files
+	os.remove(config["runbat"])
+
+
+# Call GUI
+tkinter_interface()

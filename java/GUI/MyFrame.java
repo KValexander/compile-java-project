@@ -9,7 +9,7 @@ public class MyFrame extends JFrame{
 	public MyFrame() {
 		panel = new MyPanel();
 
-		this.setTitle("JDK");
+		this.setTitle("JCA");
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		this.add(panel);
