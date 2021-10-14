@@ -30,8 +30,8 @@ if os.path.exists("compile_config.txt"):
 
 # Entries
 entries = {
-	"javapath": "Java path: ",
-	"classpath": "Class path: ",
+	"javapath": "Java dir: ",
+	"classpath": "Class dir: ",
 	"sourcetxt": "Source txt: ",
 	"compilebat": "Compile bat: ",
 	"startclass": "Start class: ",
@@ -101,6 +101,7 @@ def java_dir_processing(path):
 def class_dir_processing(path):
 	global startclass
 	startclass = ""
+	if(not os.path.exists(path)): return False;
 	ld = os.listdir(path)
 	for file in ld:
 		if re.search(config["startclass"], file):
@@ -149,13 +150,14 @@ def start_processing():
 	os.remove(config["compilebat"])
 	os.remove(config["sourcetxt"])
 
-	# Call cdp
-	class_dir_processing(config["classpath"])
-
-	# Compilation check
-	if(not os.path.exists(config["classpath"]) or not startclass):
-		return print("\nJCA message: Startup error");
-	else: print("JCA message: Compilation is successful");
+	# Checking for compilation success
+	# and getting the path to the starting class 
+	if(class_dir_processing(config["classpath"]) == False):
+		return print("\nJCA message: Compilation error")
+	if(not startclass):
+		return print("\nJCA message: Startup error")
+	else: 
+ 		print("JCA message: Compilation is successful")
 
 	# Call ap
 	if(config["copyassets"] == "true"): assets_processing()
