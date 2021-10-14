@@ -8,6 +8,7 @@ from tkinter import *
 concat = ""
 assets = []
 startclass = ""
+
 # Static config
 config = {
 	"javapath": "java",
@@ -87,6 +88,8 @@ def create_field(win, text, width, c, r):
 # Concatenating paths to java files
 def java_dir_processing(path):
 	global concat, assets
+	concat = ""
+	assets.clear()
 	ld = os.listdir(path)
 	for file in ld:
 		if re.search(r"\.java", file):
@@ -97,6 +100,7 @@ def java_dir_processing(path):
 # Getting the path to the starting class
 def class_dir_processing(path):
 	global startclass
+	startclass = ""
 	ld = os.listdir(path)
 	for file in ld:
 		if re.search(config["startclass"], file):
@@ -145,10 +149,16 @@ def start_processing():
 	os.remove(config["compilebat"])
 	os.remove(config["sourcetxt"])
 
-	# Call ap
-	if(config["copyassets"] == "true"): assets_processing()
 	# Call cdp
 	class_dir_processing(config["classpath"])
+
+	# Compilation check
+	if(not os.path.exists(config["classpath"]) or not startclass):
+		return print("\nJCA message: Startup error");
+	else: print("JCA message: Compilation is successful");
+
+	# Call ap
+	if(config["copyassets"] == "true"): assets_processing()
 
 	# Creating an interpretation file
 	create_file(config["runbat"], "java -classpath ./" + config["classpath"] + " " + startclass)
