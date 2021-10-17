@@ -88,8 +88,6 @@ def create_field(win, text, width, c, r):
 # Concatenating paths to java files
 def java_dir_processing(path):
 	global concat, assets
-	concat = ""
-	assets.clear()
 	ld = os.listdir(path)
 	for file in ld:
 		if re.search(r"\.java", file):
@@ -100,7 +98,6 @@ def java_dir_processing(path):
 # Getting the path to the starting class
 def class_dir_processing(path):
 	global startclass
-	startclass = ""
 	if(not os.path.exists(path)): return False;
 	ld = os.listdir(path)
 	for file in ld:
@@ -131,12 +128,14 @@ def create_file(name, content):
 
 # Start programm
 def start_processing():
+	global concat, assets
 
 	# Call jdp
 	java_dir_processing(config["javapath"])
 
 	# Create file with paths
 	create_file(config["sourcetxt"], concat)
+	concat = ""
 
 	# Delete class folder if it exists
 	if os.path.exists(config["classpath"]): shutil.rmtree(config["classpath"])
@@ -161,6 +160,7 @@ def start_processing():
 
 	# Call ap
 	if(config["copyassets"] == "true"): assets_processing()
+	assets.clear()
 
 	# Creating an interpretation file
 	create_file(config["runbat"], "java -classpath ./" + config["classpath"] + " " + startclass)
