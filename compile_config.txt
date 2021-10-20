@@ -1,7 +1,0 @@
-javapath = java
-classpath = class
-sourcetxt = source.txt
-compilebat = compile.bat
-startclass = Main.class
-runbat = run.bat
-copyassets = true
