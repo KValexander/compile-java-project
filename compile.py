@@ -111,7 +111,7 @@ def class_dir_processing(path):
 def assets_processing():
 	global assets
 	for asset in assets:
-		topath = re.sub(r"\/\w*\.\w*", "/", asset.replace(config["javapath"], config["classpath"], 1))
+		topath = re.sub(r"\/[\w\-]*\.\w*", "/", asset.replace(config["javapath"], config["classpath"], 1))
 		if not os.path.exists(topath):
 			shutil.copytree(topath.replace(config["classpath"], config["javapath"]),topath)
 			for filename in os.listdir(topath):
