@@ -1,7 +1,7 @@
 @echo off
 
-set src=java
-set bin=class
+set src=src
+set bin=bin
 
 if exist %src%/ goto start
 else goto end

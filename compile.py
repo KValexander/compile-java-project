@@ -11,8 +11,8 @@ startclass = ""
 
 # Static config
 config = {
-	"javapath": "java",
-	"classpath": "class",
+	"javapath": "src",
+	"classpath": "bin",
 	"sourcetxt": "source.txt",
 	"compilebat": "compile.bat",
 	"startclass": "Main.class",
