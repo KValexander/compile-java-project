@@ -2,12 +2,10 @@
 
 set src=src
 set bin=bin
+set class=com.main.Main
 
 if exist %src%/ goto start
-else goto end
-
-:end
-	echo "CODE FOLDER DOESN'T NOT EXISTS"
+else goto nf
 
 :start
 	powershell "Get-ChildItem -Path ./%src% -Name -File -s *.* > files.txt"
@@ -18,10 +16,24 @@ else goto end
 
 	rmdir /s /q %bin%
 	javac -d %bin% @source.txt
+	if not exist %bin%/ goto error
 
 	for /f "useback delims=" %%a IN ("files.txt") DO xcopy "%src%\%%a" "%bin%\%%a*"
 	del source.txt
 	del files.txt
 
 	cls
-	java -classpath ./%bin% com.main.Main
+	java -classpath ./%bin% %class%
+
+	goto end
+	
+:nf
+	echo "CODE FOLDER DOESN'T NOT EXISTS"
+	goto end
+
+:error
+	echo "COMPILATION ERROR"
+	goto end
+
+:end
+	pause
