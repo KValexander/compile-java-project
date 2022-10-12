@@ -20,7 +20,7 @@ if not exist %src%/ goto nf else goto start
 	for /f "useback delims=" %%a IN ("files.txt") DO xcopy "%src%\%%a" "%bin%\%%a*"
 	del source.txt files.txt
 
-	cls
+	rem cls
 	java -classpath ./%bin% %class%
 
 	goto end
