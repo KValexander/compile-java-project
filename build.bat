@@ -26,7 +26,7 @@ if not exist %src%/ goto nf else goto start
 	goto end
 	
 :nf
-	echo "CODE FOLDER DOESN'T NOT EXISTS"
+	echo "CODE FOLDER DOESN'T EXISTS"
 	goto end
 
 :error
